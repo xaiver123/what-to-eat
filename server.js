@@ -80,10 +80,17 @@ app.post('/api/comment', async (req, res) => {
   }
 });
 
+// 让所有路由都先尝试返回静态文件或 API
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`服务器运行在 http://localhost:${PORT}`);
-});
+// 只有在非 Vercel 环境下才启动监听
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`服务器运行在 http://localhost:${PORT}`);
+  });
+}
+
+// Vercel serverless 兼容
+module.exports = app;
