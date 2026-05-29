@@ -1,0 +1,210 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.title {
+    text-align: center;
+    color: #667eea;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.sprite-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.bubble {
+    background: #f0f4ff;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 15px solid transparent;
+    border-top-color: #f0f4ff;
+}
+
+.bubble p {
+    color: #333;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.sprite-container {
+    margin: 20px 0;
+}
+
+.sprite {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.draw-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.draw-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.draw-btn:active {
+    transform: translateY(0);
+}
+
+.result-display {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #764ba2;
+}
+
+.food-library {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.food-library h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.add-food {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.add-food input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.add-food input:focus {
+    border-color: #667eea;
+}
+
+.add-food button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.add-food button:hover {
+    background: #5568d3;
+}
+
+.food-list {
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.food-list li {
+    background: white;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.food-list li span {
+    color: #333;
+}
+
+.food-list li button {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.3s;
+}
+
+.food-list li button:hover {
+    background: #ee5a5a;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 25px;
+    }
+    
+    .title {
+        font-size: 1.5rem;
+    }
+    
+    .sprite {
+        width: 150px;
+        height: 150px;
+    }
+}

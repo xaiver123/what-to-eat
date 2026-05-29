@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今天吃什么</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">今天吃什么？</h1>
+        
+        <div class="sprite-section">
+            <div class="bubble" id="bubble">
+                <p id="message">正在召唤小精灵...</p>
+            </div>
+            <div class="sprite-container">
+                <img src="sprite.svg" alt="小精灵" class="sprite" id="sprite">
+            </div>
+            <button class="draw-btn" id="drawBtn" style="display: none;">帮我抽一个！</button>
+            <div class="result-display" id="resultDisplay"></div>
+        </div>
+
+        <div class="food-library">
+            <h2>🍽️ 我的食物库</h2>
+            <div class="add-food">
+                <input type="text" id="foodInput" placeholder="输入想吃的食物..." maxlength="20">
+                <button id="addBtn">添加</button>
+            </div>
+            <ul id="foodList" class="food-list"></ul>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
