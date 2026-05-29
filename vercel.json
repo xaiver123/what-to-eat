@@ -8,8 +8,28 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/api/welcome",
       "dest": "/server.js"
+    },
+    {
+      "src": "/api/comment",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/style.css",
+      "dest": "/style.css"
+    },
+    {
+      "src": "/app.js",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/sprite.svg",
+      "dest": "/sprite.svg"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }

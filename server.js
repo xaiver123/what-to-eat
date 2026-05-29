@@ -9,7 +9,12 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+
+// 提供静态文件 - 关键修复！
+app.use('/style.css', express.static(path.join(__dirname, 'style.css')));
+app.use('/app.js', express.static(path.join(__dirname, 'app.js')));
+app.use('/sprite.svg', express.static(path.join(__dirname, 'sprite.svg')));
+app.use('/index.html', express.static(path.join(__dirname, 'index.html')));
 
 const DEEPSEEK_BASE_URL = 'https://api.deepseek.com';
 const API_KEY = process.env.DEEPSEEK_API_KEY;
