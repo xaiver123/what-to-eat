@@ -10,11 +10,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// 提供静态文件 - 关键修复！
-app.use('/style.css', express.static(path.join(__dirname, 'style.css')));
-app.use('/app.js', express.static(path.join(__dirname, 'app.js')));
-app.use('/sprite.svg', express.static(path.join(__dirname, 'sprite.svg')));
-app.use('/index.html', express.static(path.join(__dirname, 'index.html')));
+// 关键修复：提供所有静态文件！
+app.use(express.static(__dirname));
 
 const DEEPSEEK_BASE_URL = 'https://api.deepseek.com';
 const API_KEY = process.env.DEEPSEEK_API_KEY;
@@ -85,17 +82,17 @@ app.post('/api/comment', async (req, res) => {
   }
 });
 
-// 让所有路由都先尝试返回静态文件或 API
+// 提供主页面
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 只有在非 Vercel 环境下才启动监听
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+// 本地开发模式启动监听
+if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`服务器运行在 http://localhost:${PORT}`);
   });
 }
 
-// Vercel serverless 兼容
+// Vercel 兼容
 module.exports = app;
