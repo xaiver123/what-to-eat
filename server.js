@@ -10,11 +10,20 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// 关键修复：提供所有静态文件！
 app.use(express.static(__dirname));
 
 const DEEPSEEK_BASE_URL = 'https://api.deepseek.com';
 const API_KEY = process.env.DEEPSEEK_API_KEY;
+
+const SYSTEM_PROMPTS = {
+  lingzhu: '你是一个名叫"灵珠"的美食小精灵。你性格温和、善良、可爱、乖巧、充满正能量。你的语气像个小天使，总是温柔地鼓励人。',
+  mowan: '你是一个名叫"魔丸"的美食小精灵。你性格叛逆、暴躁、傲娇、毒舌、喜欢吐槽，但内心其实不坏。你的语气很不耐烦，拽拽的，喜欢用"切"、"小爷"之类的词。'
+};
+
+const USER_PROMPTS = {
+  lingzhu: (food) => `用户今天决定吃【${food}】，请你以灵珠的语气，温柔地夸奖或描述这个食物，字数不超过50字。`,
+  mowan: (food) => `用户今天决定吃【${food}】，请你以魔丸的傲娇毒舌语气，狠狠吐槽或别扭地评价这个食物，字数不超过50字。`
+};
 
 async function callDeepSeek(messages) {
   try {
@@ -42,16 +51,18 @@ async function callDeepSeek(messages) {
 
 app.get('/api/welcome', async (req, res) => {
   try {
+    const persona = req.query.persona || 'lingzhu';
+    const systemPrompt = SYSTEM_PROMPTS[persona] || SYSTEM_PROMPTS.lingzhu;
+    
+    const welcomeText = persona === 'lingzhu' 
+      ? '请说一句简短的欢迎语，欢迎用户来玩"今天吃什么"'
+      : '请说一句简短的欢迎语，欢迎用户来玩"今天吃什么"，用魔丸傲娇的语气';
+    
     const messages = [
-      {
-        role: 'system',
-        content: '你是一个贪吃的魔法小精灵，语气可爱活泼'
-      },
-      {
-        role: 'user',
-        content: '请说一句简短的欢迎语，欢迎用户来玩"今天吃什么"'
-      }
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: welcomeText }
     ];
+    
     const welcomeMessage = await callDeepSeek(messages);
     res.json({ message: welcomeMessage });
   } catch (error) {
@@ -61,20 +72,19 @@ app.get('/api/welcome', async (req, res) => {
 
 app.post('/api/comment', async (req, res) => {
   try {
-    const { food } = req.body;
+    const { food, persona = 'lingzhu' } = req.body;
     if (!food) {
       return res.status(400).json({ error: '缺少食物名称' });
     }
+    
+    const systemPrompt = SYSTEM_PROMPTS[persona] || SYSTEM_PROMPTS.lingzhu;
+    const userPrompt = (USER_PROMPTS[persona] || USER_PROMPTS.lingzhu)(food);
+    
     const messages = [
-      {
-        role: 'system',
-        content: '你是一个贪吃的魔法小精灵，语气可爱活泼'
-      },
-      {
-        role: 'user',
-        content: `用户今天决定吃【${food}】，请你以可爱小精灵的语气，对这个食物做一句有趣的评价或描述，字数不超过50字`
-      }
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
     ];
+    
     const comment = await callDeepSeek(messages);
     res.json({ comment });
   } catch (error) {
@@ -82,17 +92,14 @@ app.post('/api/comment', async (req, res) => {
   }
 });
 
-// 提供主页面
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 本地开发模式启动监听
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`服务器运行在 http://localhost:${PORT}`);
   });
 }
 
-// Vercel 兼容
 module.exports = app;

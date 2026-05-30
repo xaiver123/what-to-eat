@@ -1,4 +1,5 @@
 let foodList = [];
+let currentPersona = 'lingzhu';
 
 const messageEl = document.getElementById('message');
 const drawBtn = document.getElementById('drawBtn');
@@ -6,6 +7,8 @@ const resultDisplay = document.getElementById('resultDisplay');
 const foodInput = document.getElementById('foodInput');
 const addBtn = document.getElementById('addBtn');
 const foodListEl = document.getElementById('foodList');
+const spriteEl = document.getElementById('sprite');
+const personaToggle = document.getElementById('personaToggle');
 
 function loadFoodList() {
     const saved = localStorage.getItem('foodList');
@@ -47,9 +50,24 @@ function removeFood(index) {
     renderFoodList();
 }
 
+function switchPersona(persona) {
+    currentPersona = persona;
+    
+    personaToggle.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.persona === persona);
+    });
+    
+    spriteEl.src = `${persona}.svg`;
+    
+    document.body.classList.remove('lingzhu-theme', 'mowan-theme');
+    document.body.classList.add(`${persona}-theme`);
+    
+    getWelcomeMessage();
+}
+
 async function getWelcomeMessage() {
     try {
-        const response = await fetch('/api/welcome');
+        const response = await fetch(`/api/welcome?persona=${currentPersona}`);
         const data = await response.json();
         messageEl.textContent = data.message;
         drawBtn.style.display = 'inline-block';
@@ -77,7 +95,10 @@ async function drawFood() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ food: selectedFood })
+            body: JSON.stringify({ 
+                food: selectedFood,
+                persona: currentPersona 
+            })
         });
         const data = await response.json();
         messageEl.textContent = data.comment;
@@ -97,5 +118,10 @@ foodInput.addEventListener('keypress', (e) => {
 });
 drawBtn.addEventListener('click', drawFood);
 
+personaToggle.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchPersona(tab.dataset.persona));
+});
+
+document.body.classList.add('lingzhu-theme');
 loadFoodList();
 getWelcomeMessage();
