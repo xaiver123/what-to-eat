@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="lingzhu-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E0F7FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#81D4FA;stop-opacity:1" />
+    </linearGradient>
+    <filter id="lingzhu-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#lingzhu-glow)">
+    <circle cx="50" cy="75" r="12" fill="url(#lingzhu-body)"/>
+    <circle cx="50" cy="50" r="25" fill="url(#lingzhu-body)"/>
+    <ellipse cx="35" cy="30" rx="8" ry="12" fill="#B3E5FC"/>
+    <ellipse cx="65" cy="30" rx="8" ry="12" fill="#B3E5FC"/>
+    
+    <path d="M 35 48 Q 40 43 45 48" stroke="#0277BD" stroke-width="3" fill="none"/>
+    <path d="M 55 48 Q 60 43 65 48" stroke="#0277BD" stroke-width="3" fill="none"/>
+    
+    <path d="M 40 58 Q 50 68 60 58" stroke="#0277BD" stroke-width="3" fill="none"/>
+    
+    <ellipse cx="32" cy="55" rx="5" ry="4" fill="#FFCDD2" opacity="0.8"/>
+    <ellipse cx="68" cy="55" rx="5" ry="4" fill="#FFCDD2" opacity="0.8"/>
+    
+    <circle cx="50" cy="8" r="5" fill="#E3F2FD"/>
+  </g>
+</svg>

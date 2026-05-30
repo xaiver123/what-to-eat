@@ -1,5 +1,6 @@
 let foodList = [];
 let currentPersona = 'lingzhu';
+let currentEmotion = 'normal';
 
 const messageEl = document.getElementById('message');
 const drawBtn = document.getElementById('drawBtn');
@@ -57,7 +58,7 @@ function switchPersona(persona) {
         tab.classList.toggle('active', tab.dataset.persona === persona);
     });
     
-    spriteEl.src = `${persona}.svg`;
+    updateSpriteImage('normal');
     
     document.body.classList.remove('lingzhu-theme', 'mowan-theme');
     document.body.classList.add(`${persona}-theme`);
@@ -65,14 +66,30 @@ function switchPersona(persona) {
     getWelcomeMessage();
 }
 
+function updateSpriteImage(emotion) {
+    currentEmotion = emotion;
+    spriteEl.style.opacity = '0';
+    spriteEl.style.transform = 'scale(0.8)';
+    
+    setTimeout(() => {
+        spriteEl.src = `${currentPersona}_${emotion}.svg`;
+        setTimeout(() => {
+            spriteEl.style.opacity = '1';
+            spriteEl.style.transform = 'scale(1)';
+        }, 100);
+    }, 200);
+}
+
 async function getWelcomeMessage() {
     try {
         const response = await fetch(`/api/welcome?persona=${currentPersona}`);
         const data = await response.json();
-        messageEl.textContent = data.message;
+        messageEl.textContent = data.text;
+        updateSpriteImage(data.emotion || 'normal');
         drawBtn.style.display = 'inline-block';
     } catch (error) {
         messageEl.textContent = '哎呀，小精灵迷路了... 请刷新页面试试~';
+        updateSpriteImage('normal');
         console.error(error);
     }
 }
@@ -101,10 +118,12 @@ async function drawFood() {
             })
         });
         const data = await response.json();
-        messageEl.textContent = data.comment;
+        messageEl.textContent = data.text;
+        updateSpriteImage(data.emotion || 'normal');
         resultDisplay.textContent = `🎉 今天就吃：${selectedFood}`;
     } catch (error) {
         messageEl.textContent = '魔法失灵了... 不过今天就吃：';
+        updateSpriteImage('normal');
         resultDisplay.textContent = `🎉 ${selectedFood}`;
         console.error(error);
     }

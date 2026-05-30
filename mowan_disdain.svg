@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="mowan-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFEBEE;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EF5350;stop-opacity:1" />
+    </linearGradient>
+    <filter id="mowan-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#mowan-glow)">
+    <circle cx="50" cy="75" r="12" fill="url(#mowan-body)"/>
+    <circle cx="50" cy="50" r="25" fill="url(#mowan-body)"/>
+    <ellipse cx="35" cy="30" rx="8" ry="12" fill="#FFCDD2"/>
+    <ellipse cx="65" cy="30" rx="8" ry="12" fill="#FFCDD2"/>
+    
+    <path d="M 35 48 Q 40 53 45 48" stroke="#B71C1C" stroke-width="3" fill="none"/>
+    <path d="M 55 48 Q 60 53 65 48" stroke="#B71C1C" stroke-width="3" fill="none"/>
+    
+    <path d="M 42 62 Q 50 58 58 62" stroke="#B71C1C" stroke-width="3" fill="none"/>
+    
+    <ellipse cx="32" cy="55" rx="4" ry="3" fill="#EF5350" opacity="0.6"/>
+    <ellipse cx="68" cy="55" rx="4" ry="3" fill="#EF5350" opacity="0.6"/>
+    
+    <circle cx="50" cy="8" r="5" fill="#FFEBEE"/>
+    <path d="M 45 10 L 47 5 L 50 10 L 53 5 L 55 10" stroke="#B71C1C" stroke-width="2" fill="none"/>
+  </g>
+</svg>

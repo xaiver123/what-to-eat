@@ -15,9 +15,18 @@ app.use(express.static(__dirname));
 const DEEPSEEK_BASE_URL = 'https://api.deepseek.com';
 const API_KEY = process.env.DEEPSEEK_API_KEY;
 
+const JSON_FORMAT_REQUIREMENT = `
+
+你必须以 JSON 格式输出你的回答，包含两个字段：emotion 和 text。
+text 是你要说的话。
+emotion 是你当前的情绪，只能从以下单词中选择一个：
+如果当前角色是灵珠，请从 ['normal', 'happy', 'shocked'] 中选择；
+如果当前角色是魔丸，请从 ['normal', 'angry', 'disdain'] 中选择。
+注意：只输出严格的 JSON，不要有任何其他解释，只输出 JSON！`;
+
 const SYSTEM_PROMPTS = {
-  lingzhu: '你是一个名叫"灵珠"的美食小精灵。你性格温和、善良、可爱、乖巧、充满正能量。你的语气像个小天使，总是温柔地鼓励人。',
-  mowan: '你是一个名叫"魔丸"的美食小精灵。你性格叛逆、暴躁、傲娇、毒舌、喜欢吐槽，但内心其实不坏。你的语气很不耐烦，拽拽的，喜欢用"切"、"小爷"之类的词。'
+  lingzhu: '你是一个名叫"灵珠"的美食小精灵。你性格温和、善良、可爱、乖巧、充满正能量。你的语气像个小天使，总是温柔地鼓励人。' + JSON_FORMAT_REQUIREMENT,
+  mowan: '你是一个名叫"魔丸"的美食小精灵。你性格叛逆、暴躁、傲娇、毒舌、喜欢吐槽，但内心其实不坏。你的语气很不耐烦，拽拽的，喜欢用"切"、"小爷"之类的词。' + JSON_FORMAT_REQUIREMENT
 };
 
 const USER_PROMPTS = {
@@ -25,7 +34,31 @@ const USER_PROMPTS = {
   mowan: (food) => `用户今天决定吃【${food}】，请你以魔丸的傲娇毒舌语气，狠狠吐槽或别扭地评价这个食物，字数不超过50字。`
 };
 
-async function callDeepSeek(messages) {
+function parseJsonResponse(responseText, persona) {
+  try {
+    const jsonMatch = responseText.match(/\{[\s\S]*?\}/);
+    if (jsonMatch) {
+      const result = JSON.parse(jsonMatch[0]);
+      const validEmotions = persona === 'lingzhu' 
+        ? ['normal', 'happy', 'shocked'] 
+        : ['normal', 'angry', 'disdain'];
+      
+      const emotion = validEmotions.includes(result.emotion) ? result.emotion : 'normal';
+      return {
+        emotion: emotion,
+        text: result.text || responseText
+      };
+    }
+  } catch (e) {
+    console.log('JSON 解析失败，使用 fallback');
+  }
+  return {
+    emotion: 'normal',
+    text: responseText
+  };
+}
+
+async function callDeepSeek(messages, persona) {
   try {
     const response = await axios.post(
       `${DEEPSEEK_BASE_URL}/chat/completions`,
@@ -42,7 +75,8 @@ async function callDeepSeek(messages) {
         }
       }
     );
-    return response.data.choices[0].message.content.trim();
+    const content = response.data.choices[0].message.content.trim();
+    return parseJsonResponse(content, persona);
   } catch (error) {
     console.error('DeepSeek API 调用失败:', error.response?.data || error.message);
     throw new Error('API 调用失败');
@@ -63,10 +97,10 @@ app.get('/api/welcome', async (req, res) => {
       { role: 'user', content: welcomeText }
     ];
     
-    const welcomeMessage = await callDeepSeek(messages);
-    res.json({ message: welcomeMessage });
+    const result = await callDeepSeek(messages, persona);
+    res.json(result);
   } catch (error) {
-    res.status(500).json({ error: '获取欢迎语失败' });
+    res.status(500).json({ emotion: 'normal', text: '哎呀，小精灵迷路了...' });
   }
 });
 
@@ -74,7 +108,7 @@ app.post('/api/comment', async (req, res) => {
   try {
     const { food, persona = 'lingzhu' } = req.body;
     if (!food) {
-      return res.status(400).json({ error: '缺少食物名称' });
+      return res.status(400).json({ emotion: 'normal', text: '请先添加食物！' });
     }
     
     const systemPrompt = SYSTEM_PROMPTS[persona] || SYSTEM_PROMPTS.lingzhu;
@@ -85,10 +119,10 @@ app.post('/api/comment', async (req, res) => {
       { role: 'user', content: userPrompt }
     ];
     
-    const comment = await callDeepSeek(messages);
-    res.json({ comment });
+    const result = await callDeepSeek(messages, persona);
+    res.json(result);
   } catch (error) {
-    res.status(500).json({ error: '获取评价失败' });
+    res.status(500).json({ emotion: 'normal', text: '魔法失灵了...' });
   }
 });
 
